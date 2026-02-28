@@ -4,6 +4,55 @@ import { useState, useEffect, useRef } from "react";
 
 const G = "#00ff88";
 
+// ─── TYPES ────────────────────────────────────────────────────────────────────
+interface Experience {
+  role: string;
+  company: string;
+  period: string;
+  type: string;
+  photos: string[];
+  highlights: string[];
+}
+
+interface Project {
+  id: string;
+  title: string;
+  subtitle: string;
+  category: string;
+  tags: string[];
+  problem: string;
+  solution: string;
+  impact: string[];
+  images: (string | null)[];
+}
+
+interface OtherProject {
+  title: string;
+  desc: string;
+  image: string | null;
+}
+
+interface Achievement {
+  year: string;
+  title: string;
+  org: string;
+  issuer: string;
+  desc: string;
+  icon: string;
+  images: string[];
+}
+
+interface Activity {
+  type: string;
+  title: string;
+  org: string;
+  period: string;
+  location: string;
+  desc: string;
+  highlights: string[];
+  images: string[];
+}
+
 // ─── IMAGE SLIDER ──────────────────────────────────────────────────────────
 function ImageSlider({ images, alt = "" }: { images: (string | null)[]; alt?: string }) {
   const [idx, setIdx] = useState(0);
@@ -38,7 +87,7 @@ function ImageSlider({ images, alt = "" }: { images: (string | null)[]; alt?: st
 }
 
 // ─── 4-COL CAROUSEL ──────────────────────────────────────────────────────────
-function Carousel4({ items, renderCard }: { items: any[]; renderCard: (item: any, i: number) => React.ReactNode }) {
+function Carousel4<T>({ items, renderCard }: { items: T[]; renderCard: (item: T, i: number) => React.ReactNode }) {
   const [page, setPage] = useState(0);
   const per = 4;
   const total = Math.ceil(items.length / per);
@@ -58,11 +107,11 @@ function Carousel4({ items, renderCard }: { items: any[]; renderCard: (item: any
           </div>
           <div style={{ display: "flex", gap: 10 }}>
             <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0}
-              style={{ width: 44, height: 44, borderRadius: 3, border: "1px solid rgba(255,255,255,0.12)", background: page === 0 ? "transparent" : "rgba(255,255,255,0.05)", color: page === 0 ? "rgba(255,255,255,0.2)" : "#fff", cursor: page === 0 ? "default" : "pointer", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
+              style={{ width: 44, height: 44, borderRadius: 3, border: "1px solid rgba(255,255,255,.12)", background: page === 0 ? "transparent" : "rgba(255,255,255,.05)", color: page === 0 ? "rgba(255,255,255,.2)" : "#fff", cursor: page === 0 ? "default" : "pointer", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
             <button onClick={() => setPage(Math.min(total - 1, page + 1))} disabled={page === total - 1}
-              style={{ width: 44, height: 44, borderRadius: 3, border: "1px solid rgba(255,255,255,0.12)", background: page === total - 1 ? "transparent" : "rgba(255,255,255,0.05)", color: page === total - 1 ? "rgba(255,255,255,0.2)" : "#fff", cursor: page === total - 1 ? "default" : "pointer", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
+              style={{ width: 44, height: 44, borderRadius: 3, border: "1px solid rgba(255,255,255,.12)", background: page === total - 1 ? "transparent" : "rgba(255,255,255,.05)", color: page === total - 1 ? "rgba(255,255,255,.2)" : "#fff", cursor: page === total - 1 ? "default" : "pointer", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
           </div>
-          <span style={{ fontFamily: "monospace", fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{page * per + 1}–{Math.min((page + 1) * per, items.length)} / {items.length}</span>
+          <span style={{ fontFamily: "monospace", fontSize: 11, color: "rgba(255,255,255,.3)" }}>{page * per + 1}–{Math.min((page + 1) * per, items.length)} / {items.length}</span>
         </div>
       )}
     </div>
@@ -120,14 +169,14 @@ const skillCategories = [
   ]},
 ];
 
-const experiences = [
-  { role: "Analytics Engineer", company: "PT Unirama Duta Niaga", period: "Sep 2025 – Present", type: "Internship - Probation", photos: [] as string[], highlights: ["Optimized ERPNext & ClickHouse SQL queries processing tens of millions of records for national-scale reporting", "Built CRM Go dashboard & sales performance reports (e-cash, PJP, quotation monitoring) with Tailwind + TypeScript", "Maintained Airflow pipelines & automated email reports across regions (Daily Sales, Stock, Service Level)", "Executed data migration & validation for core ERP docs — Invoice, Delivery Note, Sales Order, Payment Entry", "Applied IndoBERT + K-Means NLP clustering on 5,000+ PJP remarks for automated sentiment insights"] },
-  { role: "Data & Business Intelligence Intern", company: "PT Aska Daya Tama", period: "Sep 2024 – Feb 2025", type: "Internship", photos: [] as string[], highlights: ["Consolidated 2,700+ records from 7 multi-sheet Excel files into BigQuery via automated ETL", "Modeled fact constellation schema (3 fact + 7 dimension tables) for Mud Motor operations", "Built 6-page Looker Studio dashboard — 90.8/100 usability, 98% task success, 4.7/5 efficiency score"] },
-  { role: "Machine Learning Cohort", company: "Bangkit Academy — Google, GoTo, Traveloka", period: "Feb – Aug 2024", type: "Apprenticeship", photos: [] as string[], highlights: ["Collected, labeled, and preprocessed 6,500+ records across 3 dataset types for FitMeLook App", "Built dual CNN models (MobileNet + DenseNet) achieving 91% face shape & 70% seasonal color accuracy", "Ranked Top 1,000 in English & Top 100 in Soft Skills among all cohort participants"] },
-  { role: "Data Science Intern", company: "BCC FILKOM Universitas Brawijaya", period: "Feb – Apr 2023", type: "Internship", photos: [] as string[], highlights: ["Processed 159,000+ PayLater records — demographic profiling, EDA, and visualization", "Tuned Random Forest, Naive Bayes & XGBoost models to achieve 80%+ loan repayment prediction accuracy"] },
+const experiences: Experience[] = [
+  { role: "Analytics Engineer", company: "PT Unirama Duta Niaga", period: "Sep 2025 – Present", type: "Internship - Probation", photos: [], highlights: ["Optimized ERPNext & ClickHouse SQL queries processing tens of millions of records for national-scale reporting", "Built CRM Go dashboard & sales performance reports (e-cash, PJP, quotation monitoring) with Tailwind + TypeScript", "Maintained Airflow pipelines & automated email reports across regions (Daily Sales, Stock, Service Level)", "Executed data migration & validation for core ERP docs — Invoice, Delivery Note, Sales Order, Payment Entry", "Applied IndoBERT + K-Means NLP clustering on 5,000+ PJP remarks for automated sentiment insights"] },
+  { role: "Data & Business Intelligence Intern", company: "PT Aska Daya Tama", period: "Sep 2024 – Feb 2025", type: "Internship", photos: [], highlights: ["Consolidated 2,700+ records from 7 multi-sheet Excel files into BigQuery via automated ETL", "Modeled fact constellation schema (3 fact + 7 dimension tables) for Mud Motor operations", "Built 6-page Looker Studio dashboard — 90.8/100 usability, 98% task success, 4.7/5 efficiency score"] },
+  { role: "Machine Learning Cohort", company: "Bangkit Academy — Google, GoTo, Traveloka", period: "Feb – Aug 2024", type: "Apprenticeship", photos: [], highlights: ["Collected, labeled, and preprocessed 6,500+ records across 3 dataset types for FitMeLook App", "Built dual CNN models (MobileNet + DenseNet) achieving 91% face shape & 70% seasonal color accuracy", "Ranked Top 1,000 in English & Top 100 in Soft Skills among all cohort participants"] },
+  { role: "Data Science Intern", company: "BCC FILKOM Universitas Brawijaya", period: "Feb – Apr 2023", type: "Internship", photos: [], highlights: ["Processed 159,000+ PayLater records — demographic profiling, EDA, and visualization", "Tuned Random Forest, Naive Bayes & XGBoost models to achieve 80%+ loan repayment prediction accuracy"] },
 ];
 
-const projects = [
+const projects: Project[] = [
   { id: "01", title: "Mud Motor BI Dashboard", subtitle: "PT Aska Daya Tama", category: "BI & Data Engineering", tags: ["BigQuery", "Looker Studio", "ETL", "Kimball"], problem: "Operations team lacked centralized visibility into Mud Motor profitability, utilization, and maintenance cycles across multiple Excel files.", solution: "Designed end-to-end BI system — automated ETL consolidating 2,700+ records, fact constellation schema, 6-page interactive dashboard.", impact: ["90.8 / 100 usability score", "98% task success rate", "4.7 / 5 efficiency score", "3 fact × 7 dimension tables"], images: ["/Aska-1.jpg","/Aska-2.jpg","/Aska-3.jpg","/Aska-4.jpg","/Aska-5.jpg","/Aska-6.jpg","/Aska-7.jpg"] },
   { id: "02", title: "FitMeLook – Fashion Recommendation", subtitle: "Bangkit Academy Capstone", category: "Machine Learning", tags: ["CNN", "MobileNet", "DenseNet", "TF.js", "MTCNN"], problem: "Women struggle to find clothing that suits their face shape and skin tone — existing apps lack real personalization.", solution: "Built dual-model CNN: MobileNet for 4-seasonal color type, DenseNet for face shape — deployed on Android + Google Cloud.", impact: ["91% face shape accuracy", "70% seasonal color accuracy", "6,500+ labeled data points", "MTCNN face crop pipeline"], images: ["/fitmelook-1.jpeg","/fitmelook-2.jpeg","/fitmelook-3.jpeg"] },
   { id: "03", title: "Sales Performance & CRM Dashboard", subtitle: "PT Unirama Duta Niaga", category: "Analytics Engineering", tags: ["ClickHouse", "ERPNext", "TypeScript", "Tailwind", "Airflow"], problem: "National sales team had no real-time visibility into e-cash, PJP field rep activity, and quotation pipeline across all regions.", solution: "Engineered SQL-backed dashboards in CRM Go with TypeScript + Tailwind, automated via Airflow for daily multi-region reporting.", impact: ["10M+ records processed daily", "Automated multi-region reports", "IndoBERT sentiment on 5K+ remarks", "Full Q2P cycle monitoring"], images: ["/crm-1.jpeg"] },
@@ -138,7 +187,7 @@ const projects = [
   { id: "08", title: "Bike Sharing Demand Analysis", subtitle: "IDCamp 2023 — Dicoding", category: "Data Analytics", tags: ["Python", "Streamlit", "EDA", "Matplotlib"], problem: "Bike sharing operators lacked insight into how season, weather, and holidays affected rental volumes.", solution: "Analyzed 17,000+ rental records and deployed Streamlit dashboard surfacing peak-demand patterns.", impact: ["17K+ records analyzed", "Streamlit dashboard deployed", "Holiday demand patterns", "Weather correlations mapped"], images: ["/Dicoding-1.png","/Dicoding-2.png","/Dicoding-3.png"] },
 ];
 
-const otherProjects: Record<string, { title: string; desc: string; image: string | null }[]> = {
+const otherProjects: Record<string, OtherProject[]> = {
   "Data & ML": [
     { title: "Employee Promotion Model", desc: "Python — Weighted Product Method", image: "/Data-1.jpg" },
     { title: "Medical Appointment OLAP", desc: "Data Warehouse Study Case", image: "/Data-2.jpg" },
@@ -163,18 +212,18 @@ const otherProjects: Record<string, { title: string; desc: string; image: string
   ],
 };
 
-const achievements = [
+const achievements: Achievement[] = [
   { year: "Sep 2025", title: "Best Graduate — Faculty of Computer Science", org: "Universitas Brawijaya", issuer: "Issued by Universitas Brawijaya", desc: "Recognized as one of 22 top graduates of Universitas Brawijaya in Graduation Period II 2025/2026, representing the Faculty of Computer Science for outstanding academic performance.", icon: "🏆", images: ["/terbaik-1.jpeg", "/terbaik-2.jpeg"] },
   { year: "Jan 2024", title: "Absolute Winner — Gold Medalist Math Competition", org: "POSN 2024, Yapresindo Institution", issuer: "Issued by Yapresindo", desc: "Attained Absolute Winner, clinching a Gold Medal out of 300+ national participants in POSN 2024, covering various academic fields including Mathematics.", icon: "🥇", images: ["/POSN.jpg", "/first-mtk.jpeg"] },
-  { year: "Oct 2023", title: "Top 50 Best Posters — International Cycle Seminar", org: "MMD 1000D UB", issuer: "Issued by MMD1000D UB", desc: "The poster showcasing activities of MMD Team 547 in Desa Umbulsari was selected as one of the top 50 best posters at the CYCLE International Seminar among 1,000 teams.", icon: "📜", images: [] as string[] },
+  { year: "Oct 2023", title: "Top 50 Best Posters — International Cycle Seminar", org: "MMD 1000D UB", issuer: "Issued by MMD1000D UB", desc: "The poster showcasing activities of MMD Team 547 in Desa Umbulsari was selected as one of the top 50 best posters at the CYCLE International Seminar among 1,000 teams.", icon: "📜", images: [] },
   { year: "2024", title: "Top Performer — Bangkit Academy", org: "Led by Google, GoTo & Traveloka", issuer: "Bangkit Academy 2024", desc: "Ranked Top 1,000 in English courses & tests, and Top 100 in Soft Skill assignments among all Bangkit Academy 2024 cohort participants.", icon: "⭐", images: ["/Top-Performer-Bangkit.jpg"] },
   { year: "Jan 2022", title: "Semifinalist — DIG IN Business Competition", org: "BINUS University", issuer: "Issued by DIG IN Competition 2022", desc: "Achieved semifinalist standing in the DIG IN Business Case Competition 2022 at BINUS University.", icon: "🎯", images: ["/semifinalist_digin.jpeg"] },
   { year: "Oct 2021", title: "2nd Place — PKM-GFK FILKOM UB", org: "PK2MABA & Startup Academy Filkom 2021", issuer: "Issued by PK2MABA & Startup Academy", desc: "Achieved 2nd place in a data analysis and research competition (Constructive Futuristic Ideas field) at Brawijaya University's Faculty of Computer Science.", icon: "🥈", images: ["/pkm-gfk.jpeg"] },
 ];
 
-const activities = [
+const activities: Activity[] = [
   { type: "Volunteering", title: "Mahasiswa Membangun 1000 Desa (MMD UB 2023)", org: "Universitas Brawijaya", period: "Jul – Aug 2023 · 2 mos", location: "Umbulsari, Jember, East Java", desc: "Participated in the MMD 1000D Program as part of Team MMD 547, primary mission to uplift rural communities in Umbulsari Village.", highlights: ["Initiated and managed digital-based supplementary classes, involving 40+ elementary school students", "Collaborated with BrainAcademy RuangGuru Jember to conduct digital education classes at SMPN 1 Umbulsari, engaging 800+ students", "Created and launched the brand logo for the Umbulsari Jember SME Association at an event attended by 1,000+ residents", "Selected as one of top 50 best posters in the International Cycle Seminar among 1,000 MMD teams"], images: ["/KKN-1.jpeg","/KKN-2.jpg","/KKN-3.jpg","/KKN-4.jpg","/KKN-5.jpg","/KKN-6.jpg"] },
-  { type: "Training", title: "IDCamp Program 2023 × Dicoding", org: "IDCamp Indosat Ooredoo Hutchison", period: "Sep – Dec 2023", location: "Remote", desc: "Data Scientist & Machine Learning Developer Program. Completed modules in Python, Data Science, SQL, and Introduction to Machine Learning.", highlights: ["Achieved average score exceeding 98% in theoretical quizzes and exams", "Analyzed bike share data using Python and Streamlit, processing 18,000+ records", "Conducted statistical summaries and correlation analyses of weather and season with bike rentals"], images: [] as string[] },
+  { type: "Training", title: "IDCamp Program 2023 × Dicoding", org: "IDCamp Indosat Ooredoo Hutchison", period: "Sep – Dec 2023", location: "Remote", desc: "Data Scientist & Machine Learning Developer Program. Completed modules in Python, Data Science, SQL, and Introduction to Machine Learning.", highlights: ["Achieved average score exceeding 98% in theoretical quizzes and exams", "Analyzed bike share data using Python and Streamlit, processing 18,000+ records", "Conducted statistical summaries and correlation analyses of weather and season with bike rentals"], images: [] },
   { type: "Language Program", title: "Intensive English Program", org: "Kampung Inggris LC", period: "Dec 2022 – Feb 2023 · 3 mos", location: "Pare, East Java · On-site", desc: "Completed intensive English language program focusing on grammar, fluency, pronunciation, and vocabulary.", highlights: ["Strengthened grammar foundation and conversational fluency", "Enhanced pronunciation, clarity, and vocabulary for effective communication"], images: ["/pare-1.jpeg", "/pare-2.jpg"] },
   { type: "Organization", title: "Leader — Karya Ilmiah Remaja (KIR)", org: "SMA Negeri 12 Jakarta", period: "Jul 2019 – Jul 2020 · 1 yr 1 mo", location: "East Jakarta, Indonesia", desc: "Led the KIR scientific writing organization at SMAN 12 Jakarta. Managed activities, taught scientific writing and research presentation skills.", highlights: ["Managed activities involving 50+ students in scientific research and writing", "Taught scientific writing and effective communication for research presentations", "Achieved Top 10 Finalist nationally in the BINECA Industrial Engineering Competition", "Previously served as Member (Jul 2018 – Jul 2019) before becoming Leader"], images: ["/kir.jpeg"] },
 ];
@@ -410,7 +459,7 @@ export default function Home() {
                   { label: "GPA", accent: true, node: <AnimatedNumber target={3.91} decimals={2} /> },
                   { label: "Years Exp", node: <AnimatedNumber target={1} suffix="+" /> },
                   { label: "Certs", node: <AnimatedNumber target={12} suffix="+" /> },
-                ].map((s, i) => (
+                ].map((s) => (
                   <div key={s.label} style={{ padding: "22px 20px", background: s.accent ? "rgba(0,255,136,.05)" : "rgba(255,255,255,.025)", border: `1px solid ${s.accent ? "rgba(0,255,136,.22)" : "rgba(255,255,255,.06)"}`, borderRadius: 4, flex: 1 }}>
                     <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 30, fontWeight: 700, color: G, lineHeight: 1 }}>{s.node}</div>
                     <div style={{ fontSize: 11, color: "rgba(255,255,255,.32)", marginTop: 8, fontFamily: "'JetBrains Mono',monospace", letterSpacing: ".08em" }}>{s.label}</div>
@@ -440,7 +489,7 @@ export default function Home() {
         {/* EXPERIENCE — Timeline */}
         <section id="experience" className="sp2" style={{ padding: "100px 72px", position: "relative", zIndex: 1 }}>
           <div className="sl">02 — Experience</div>
-          <h2 className="st">Where I've <span style={{ color: G }}>shipped</span> work.</h2>
+          <h2 className="st">Where I&apos;ve <span style={{ color: G }}>shipped</span> work.</h2>
           <div className="timeline">
             {experiences.map((exp, idx) => {
               const isOpen = expandedExp === exp.company;
@@ -495,7 +544,7 @@ export default function Home() {
         <section id="projects" className="sp2" style={{ padding: "100px 72px", position: "relative", zIndex: 1 }}>
           <div className="sl">03 — Projects</div>
           <h2 className="st">Problems solved, <span style={{ color: G }}>results</span> measured.</h2>
-          <Carousel4 items={projects} renderCard={(proj) => {
+          <Carousel4<Project> items={projects} renderCard={(proj: Project) => {
             const isOpen = activeProject === proj.id;
             return (
               <div key={proj.id} onClick={() => setActiveProject(isOpen ? null : proj.id)}
@@ -532,7 +581,7 @@ export default function Home() {
             <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap" }}>
               {Object.keys(otherProjects).map(tab => <button key={tab} className={`tb ${activeTab === tab ? "on" : ""}`} onClick={() => setActiveTab(tab)}>{tab}</button>)}
             </div>
-            <Carousel4 items={otherProjects[activeTab]} renderCard={(p) => (
+            <Carousel4<OtherProject> items={otherProjects[activeTab]} renderCard={(p: OtherProject) => (
               <div key={p.title} className="ch" style={{ background: "rgba(255,255,255,.025)", border: "1px solid rgba(255,255,255,.06)", borderRadius: 8, overflow: "hidden", display: "flex", flexDirection: "column" }}>
                 <ImageSlider images={[p.image]} alt={p.title} />
                 <div style={{ padding: "14px 18px 20px" }}>
@@ -550,7 +599,7 @@ export default function Home() {
         <section id="achievements" className="sp2" style={{ padding: "100px 72px", position: "relative", zIndex: 1 }}>
           <div className="sl">04 — Achievements</div>
           <h2 className="st">Recognition & <span style={{ color: G }}>milestones.</span></h2>
-          <Carousel4 items={achievements} renderCard={(ach) => (
+          <Carousel4<Achievement> items={achievements} renderCard={(ach: Achievement) => (
             <div key={ach.title} className="ch" style={{ background: "rgba(255,255,255,.025)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 10, overflow: "hidden", display: "flex", flexDirection: "column" }}>
               <ImageSlider images={ach.images} alt={ach.title} />
               <div style={{ padding: "20px 22px 24px", flex: 1 }}>
@@ -588,7 +637,7 @@ export default function Home() {
                     onMouseLeave={e => { if (!isOpen) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,.02)"; }}
                   >
                     <div>
-                      <span className="tb2" style={{ background: tBg[act.type] || "rgba(255,255,255,.08)", color: tColor[act.type] || "rgba(255,255,255,.5)", border: `1px solid ${tColor[act.type]}30` }}>{act.type}</span>
+                      <span className="tb2" style={{ background: tBg[act.type] || "rgba(255,255,255,.08)", color: tColor[act.type] || "rgba(255,255,255,.5)", border: `1px solid ${tColor[act.type] || "rgba(255,255,255,.2)"}30` }}>{act.type}</span>
                       <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4 }}>{act.title}</div>
                       <div style={{ fontSize: 13, color: "rgba(255,255,255,.4)", marginTop: 3 }}>{act.org} · {act.period}</div>
                     </div>
@@ -625,7 +674,7 @@ export default function Home() {
         {/* CONTACT — compact, footer-style */}
         <section id="contact" className="sp2" style={{ padding: "80px 72px 60px", position: "relative", zIndex: 1 }}>
           <div className="sl">06 — Contact</div>
-          <h2 className="st">Let's build <span style={{ color: G }}>something</span> together.</h2>
+          <h2 className="st">Let&apos;s build <span style={{ color: G }}>something</span> together.</h2>
           <p style={{ fontSize: 15, color: "rgba(255,255,255,.4)", lineHeight: 1.7, maxWidth: 420, marginBottom: 36 }}>Open to analytics engineering and BI opportunities — full-time, freelance, or collaboration.</p>
 
           {/* Horizontal contact cards */}
